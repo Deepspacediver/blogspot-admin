@@ -1,4 +1,4 @@
-import axiosInstance from "../../lib/axios.config";
+import axiosInstance from "@/lib/axios.config";
 
 export type SignUpProps = {
   email: string;
