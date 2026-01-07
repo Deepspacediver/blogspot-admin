@@ -1,5 +1,6 @@
 import { refreshToken } from "@/api/auth/fetch";
 import axios from "axios";
+import { setIsLoggedIn } from "./local-storage-helpers";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -24,6 +25,8 @@ axiosInstance.interceptors.response.use(
       originalRequest._retried = true;
       await refreshToken();
       return axiosInstance(originalRequest);
+    } else {
+      setIsLoggedIn(false);
     }
 
     return Promise.reject(error);
