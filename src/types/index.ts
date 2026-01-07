@@ -9,7 +9,7 @@ export type User = {
   role: "SUPER_ADMIN";
 };
 
-export type UserFromCookie = { userId: number } & Omit<User, "id" | "password">;
+export type UserFromCookie = Omit<User, "id" | "password">;
 
 export type Comment = {
   id: number;
