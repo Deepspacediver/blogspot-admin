@@ -6,7 +6,7 @@ export type SignUpProps = {
   confirmPassword: string;
 };
 export const signUp = async (payload: SignUpProps) => {
-  const { data } = await axiosInstance.post("/auth/signup", { payload });
+  const { data } = await axiosInstance.post("/auth/signup", { ...payload });
   return data;
 };
 
@@ -16,7 +16,7 @@ export type SignInProps = {
 };
 
 export const signIn = async (payload: SignInProps) => {
-  const { data } = await axiosInstance.post("/auth/signin", { payload });
+  const { data } = await axiosInstance.post("/auth/signin", { ...payload });
   return data;
 };
 
