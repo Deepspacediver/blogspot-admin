@@ -3,5 +3,6 @@ export const setIsLoggedIn = (val: boolean) => {
 };
 
 export const getIsLoggedIn = () => {
-  return !!localStorage.getItem("isLogged");
+  const value = localStorage.getItem("isLogged");
+  return value === "true" ? true : false;
 };
