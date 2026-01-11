@@ -20,10 +20,16 @@ axiosInstance.interceptors.response.use(
       | undefined;
     const isUnauthorized = responseStatus === 401;
     const wasRequestRetried = !!originalRequest._retried;
+    const wasRequestRefreshRoute = originalRequest?.url === "/auth/refresh";
 
-    if (isUnauthorized && !wasRequestRetried) {
+    if (isUnauthorized && !wasRequestRetried && !wasRequestRefreshRoute) {
       originalRequest._retried = true;
-      await refreshToken();
+      try {
+        await refreshToken();
+      } catch {
+        setIsLoggedIn(false);
+        return Promise.reject(error);
+      }
       return axiosInstance(originalRequest);
     } else {
       setIsLoggedIn(false);
