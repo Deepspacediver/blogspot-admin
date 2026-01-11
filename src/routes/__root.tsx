@@ -27,6 +27,7 @@ export const Route = createRootRouteWithContext<{
         const userData = await queryClient.ensureQueryData({
           queryKey: ["user"],
           queryFn: getUserDetails,
+          retry: false,
         });
         return {
           user: userData satisfies UserDetailsReturn,
