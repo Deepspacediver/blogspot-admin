@@ -15,14 +15,17 @@ export const Route = createRootRouteWithContext<{
 }>()({
   component: RootComponent,
   beforeLoad: async ({ context: { user, queryClient } }) => {
-    const isLoggedInLocalStorage = !!getIsLoggedIn();
-    // TODO handle this redirect with different router nesting
+    const isLoggedInLocalStorage = getIsLoggedIn();
+    // TODO handle this redirect with different router nesting?
     const isOnSignRoutes = ["/sign-in", "/sign-up"].includes(location.pathname);
+
     if (!isLoggedInLocalStorage && !isOnSignRoutes) {
       throw redirect({ to: "/sign-in" });
     }
-    const isLoggedWihoutContext = !user && isLoggedInLocalStorage;
-    if (isLoggedWihoutContext) {
+
+    const isPartiallyLogged =
+      (!user && isLoggedInLocalStorage) || (!isLoggedInLocalStorage && user);
+    if (isPartiallyLogged) {
       try {
         const userData = await queryClient.ensureQueryData({
           queryKey: ["user"],
@@ -34,6 +37,7 @@ export const Route = createRootRouteWithContext<{
         };
       } catch {
         setIsLoggedIn(false);
+        throw redirect({ to: "/sign-in" });
       }
     }
   },

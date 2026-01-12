@@ -1,7 +1,12 @@
 import { useSignIn } from "@/api/auth/query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/sign-in/")({
+  beforeLoad: ({ context: { user } }) => {
+    if (user) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: RouteComponent,
 });
 
