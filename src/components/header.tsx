@@ -1,3 +1,4 @@
+import SignOutButton from "./sign-out.button";
 import { Button } from "./ui/button";
 import UserProfile from "./user-profile";
 import { Suspense } from "react";
@@ -10,6 +11,7 @@ export default function Header() {
       </nav>
       <Suspense fallback={<div>Loading user...</div>}>
         <UserProfile />
+        <SignOutButton />
       </Suspense>
     </header>
   );

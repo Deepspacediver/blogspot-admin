@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { signIn, signUp } from "@/api/auth/fetch";
+import { signIn, signOut, signUp } from "@/api/auth/fetch";
 import { useNavigate } from "@tanstack/react-router";
 import { setIsLoggedIn } from "@/lib/local-storage-helpers";
 
@@ -21,6 +21,17 @@ export const useSignIn = () => {
     onSuccess: () => {
       setIsLoggedIn(true);
       navigate({ to: "/" });
+    },
+  });
+};
+
+export const useSignOut = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: signOut,
+    onSuccess: async () => {
+      setIsLoggedIn(false);
+      navigate({ to: "/sign-in", reloadDocument: true });
     },
   });
 };
