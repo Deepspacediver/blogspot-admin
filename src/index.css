@@ -3,7 +3,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: Roboto;
+  src: local("Roboto");
+  src: url("./assets/fonts/Roboto.ttf");
+}
+
 @theme inline {
+  --font-roboto: Roboto, "sans-serif";
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
