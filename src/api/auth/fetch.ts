@@ -20,6 +20,11 @@ export const signIn = async (payload: SignInProps) => {
   return data;
 };
 
+export const signOut = async () => {
+  const { data } = await axiosInstance.post("/auth/signout");
+  return data;
+};
+
 export const refreshToken = async () => {
   const { data } = await axiosInstance.post("/auth/refresh");
   return data;
