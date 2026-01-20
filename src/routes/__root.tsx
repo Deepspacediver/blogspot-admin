@@ -16,7 +16,6 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
   beforeLoad: async ({ context: { user, queryClient } }) => {
     const isLoggedInLocalStorage = getIsLoggedIn();
-    // TODO handle this redirect with different router nesting?
     const isOnSignRoutes = ["/sign-in", "/sign-up"].includes(location.pathname);
 
     if (!isLoggedInLocalStorage && !isOnSignRoutes) {
