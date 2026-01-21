@@ -15,7 +15,7 @@ type LinkProps = VariantProps<typeof buttonVariants> &
 export function Link({
   children,
   className,
-  size = "default",
+  size = "link",
   variant = "link",
   ...props
 }: LinkProps) {
@@ -26,7 +26,7 @@ export function Link({
           variant,
           size,
         }),
-        className
+        className,
       )}
       {...props}
     >
@@ -44,8 +44,8 @@ export function ExternalLink({
   href,
   children,
   className,
-  variant,
-  size,
+  variant = "link",
+  size = "link",
   ...props
 }: ExternalLinkProps) {
   <a
