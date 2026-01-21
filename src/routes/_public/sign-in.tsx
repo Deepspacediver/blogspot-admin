@@ -7,8 +7,8 @@ export const Route = createFileRoute("/_public/sign-in")({
 
 function RouteComponent() {
   return (
-    <div>
+    <>
       <SignInForm />
-    </div>
+    </>
   );
 }
