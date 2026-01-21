@@ -12,8 +12,8 @@ export const Route = createFileRoute("/_public")({
 
 function RouteComponent() {
   return (
-    <div>
+    <main className="min-h-svh w-full flex items-center justify-center">
       <Outlet />
-    </div>
+    </main>
   );
 }
