@@ -5,7 +5,7 @@ export default function SignOutButton() {
   const { mutate: signOut } = useSignOut();
   return (
     <Button
-      variant={"default"}
+      variant={"link"}
       onClick={() => {
         signOut();
       }}
