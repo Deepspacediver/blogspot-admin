@@ -31,8 +31,24 @@ import {
   getActiveListDropdown,
   getActiveTypographyDropdown,
 } from "./helpers/get-active-dropdown";
+import Image from "@tiptap/extension-image";
+import { TiptapImageSkeleton } from "./extensions/file-skeleton";
+import { CustomFileHandler } from "./extensions/file-handler";
 
-const extensions = [StarterKit];
+const extensions = [
+  StarterKit,
+  Image.configure({
+    resize: {
+      enabled: true,
+      directions: ["top-left", "bottom-left", "top-right", "bottom-right"],
+      alwaysPreserveAspectRatio: true,
+      minHeight: 50,
+      minWidth: 50,
+    },
+  }),
+  TiptapImageSkeleton,
+  CustomFileHandler,
+];
 
 function MenuBar({ editor }: { editor: Editor }) {
   const editorState = useEditorState({
