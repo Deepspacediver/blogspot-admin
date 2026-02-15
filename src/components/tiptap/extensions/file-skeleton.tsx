@@ -8,7 +8,7 @@ import {
 export function ImageSkeleton() {
   return (
     <NodeViewWrapper className="tiptap-image-skeleton">
-      <div className="tiptap-skeleton"></div>
+      <div className="animate-pulse bg-gray-200 w-52 h-60"></div>
     </NodeViewWrapper>
   );
 }
@@ -30,4 +30,3 @@ export const TiptapImageSkeleton = Node.create({
     return ReactNodeViewRenderer(ImageSkeleton);
   },
 });
-console.log(TiptapImageSkeleton.name);
