@@ -9,18 +9,21 @@ export const CustomFileHandler = FileHandler.configure({
     "image/gif",
     "image/webp",
   ],
+
   onDrop: (currentEditor, files, pos) => {
     files.forEach(async (file) => {
-      const insertionRange = { from: pos - 1, to: pos + 1 };
-
+      const historySnapshot = currentEditor.state;
+      const insertionRange = { from: pos - 1, to: pos };
+      currentEditor
+        .chain()
+        .insertContentAt(pos, `<tiptap-image-skeleton/>`)
+        .focus()
+        .run();
       try {
-        currentEditor
-          .chain()
-          .insertContentAt(pos, `<tiptap-image-skeleton/>`)
-          .focus()
-          .run();
-
         const { id, url } = await uploadFile({ file });
+        // This prevents undo command from reverting to image skeleton
+        // there might be better solution
+        currentEditor.view.updateState(historySnapshot);
         currentEditor
           .chain()
           .insertContentAt(insertionRange, {
@@ -29,7 +32,6 @@ export const CustomFileHandler = FileHandler.configure({
               src: url,
               fileId: id,
             },
-            replace: true,
           })
           .focus()
           .run();
@@ -47,14 +49,16 @@ export const CustomFileHandler = FileHandler.configure({
         return false;
       }
       const pos = currentEditor.state.selection.anchor;
+      const historySnapshot = currentEditor.state;
       const insertionRange = { from: pos - 1, to: pos };
+      currentEditor
+        .chain()
+        .insertContentAt(pos, `<tiptap-image-skeleton/>`)
+        .focus()
+        .run();
       try {
-        currentEditor
-          .chain()
-          .insertContentAt(pos, `<tiptap-image-skeleton/>`)
-          .focus()
-          .run();
         const { id, url } = await uploadFile({ file });
+        currentEditor.view.updateState(historySnapshot);
         currentEditor
           .chain()
           .insertContentAt(insertionRange, {
@@ -63,7 +67,6 @@ export const CustomFileHandler = FileHandler.configure({
               src: url,
               fileId: id,
             },
-            replace: true,
           })
           .focus()
           .run();
