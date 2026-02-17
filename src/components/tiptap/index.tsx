@@ -1,6 +1,7 @@
 import type { Editor } from "@tiptap/react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import TextAlign from "@tiptap/extension-text-align";
 import {
   Bold,
   ChevronDown,
@@ -17,6 +18,9 @@ import {
   Quote,
   SeparatorHorizontal,
   Strikethrough,
+  TextAlignCenter,
+  TextAlignEnd,
+  TextAlignStart,
   Type,
   Undo2,
 } from "lucide-react";
@@ -28,8 +32,9 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import {
-  getActiveListDropdown,
-  getActiveTypographyDropdown,
+  getActiveAlignDropdownItem,
+  getActiveListDropdownItem,
+  getActiveTypographyDropdownItem,
 } from "./helpers/get-active-dropdown";
 import { TiptapImageSkeleton } from "./extensions/file-skeleton";
 import { CustomFileHandler } from "./extensions/file-handler";
@@ -40,6 +45,9 @@ const extensions = [
   ImageTiptapExtension,
   TiptapImageSkeleton,
   CustomFileHandler,
+  TextAlign.configure({
+    types: ["heading", "paragraph"],
+  }),
 ];
 
 function MenuBar({ editor }: { editor: Editor }) {
@@ -65,6 +73,9 @@ function MenuBar({ editor }: { editor: Editor }) {
         isOrderedList: ctx.editor.isActive("orderedList") ?? false,
         isCodeBlock: ctx.editor.isActive("codeBlock") ?? false,
         isBlockquote: ctx.editor.isActive("blockquote") ?? false,
+        isAlignLeft: ctx.editor.isActive({ textAlign: "left" }),
+        isAlignCenter: ctx.editor.isActive({ textAlign: "center" }),
+        isAlignRight: ctx.editor.isActive({ textAlign: "right" }),
         canUndo: ctx.editor.can().chain().undo().run() ?? false,
         // canRedo: ctx.editor.can().chain().redo().run() ?? false,
       };
@@ -112,13 +123,29 @@ function MenuBar({ editor }: { editor: Editor }) {
       icon: ListOrdered,
     },
   };
+
+  const alignOptions = {
+    left: {
+      onSelect: () => editor.chain().focus().toggleTextAlign("left").run(),
+      icon: TextAlignStart,
+    },
+    center: {
+      onSelect: () => editor.chain().focus().toggleTextAlign("center").run(),
+      icon: TextAlignCenter,
+    },
+    right: {
+      onSelect: () => editor.chain().focus().toggleTextAlign("right").run(),
+      icon: TextAlignEnd,
+    },
+  };
+
   return (
     <div className="control-group">
       <div className="button-group border border-b-0 border-zinc-600 p-1 ">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant={"editor"} size={"editor"}>
-              {getActiveTypographyDropdown({
+              {getActiveTypographyDropdownItem({
                 editorState,
                 options: headingOptions,
               })}
@@ -127,21 +154,56 @@ function MenuBar({ editor }: { editor: Editor }) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="min-w-fit">
-            {Object.values(headingOptions).map(({ icon: Icon, onSelect }) => {
-              return (
-                <DropdownMenuItem
-                  asChild
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    onSelect();
-                  }}
-                >
-                  <Button size={"editor"} variant={"editor"}>
-                    <Icon className="text-tertiary size-5" />
-                  </Button>
-                </DropdownMenuItem>
-              );
-            })}
+            {Object.entries(headingOptions).map(
+              ([name, { icon: Icon, onSelect }]) => {
+                return (
+                  <DropdownMenuItem
+                    key={name}
+                    asChild
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      onSelect();
+                    }}
+                  >
+                    <Button size={"editor"} variant={"editor"}>
+                      <Icon className="text-tertiary size-5" />
+                    </Button>
+                  </DropdownMenuItem>
+                );
+              },
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant={"editor"} size={"editor"}>
+              {getActiveAlignDropdownItem({
+                editorState,
+                options: alignOptions,
+              })}
+              <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className="min-w-fit">
+            {Object.entries(alignOptions).map(
+              ([name, { icon: Icon, onSelect }]) => {
+                return (
+                  <DropdownMenuItem
+                    key={name}
+                    asChild
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      onSelect();
+                    }}
+                  >
+                    <Button size={"editor"} variant={"editor"}>
+                      <Icon className="text-tertiary size-5" />
+                    </Button>
+                  </DropdownMenuItem>
+                );
+              },
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
         <Button
@@ -182,7 +244,7 @@ function MenuBar({ editor }: { editor: Editor }) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant={"editor"} size={"editor"}>
-              {getActiveListDropdown({
+              {getActiveListDropdownItem({
                 editorState,
                 options: listOptions,
               })}
@@ -241,11 +303,19 @@ function MenuBar({ editor }: { editor: Editor }) {
 export default function TipTapEditor() {
   const editor = useEditor({
     extensions,
+    shouldRerenderOnTransaction: true,
   });
   return (
     <div>
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
+      <button
+        onClick={() => {
+          console.log({ editorr: editor.getJSON() });
+        }}
+      >
+        json
+      </button>
     </div>
   );
 }
