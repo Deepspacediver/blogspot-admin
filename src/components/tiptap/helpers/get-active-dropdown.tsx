@@ -8,7 +8,7 @@ type GetActiveTypographyDropdownProps = GetActiveDropdownProps & {
   options: Record<string, { onSelect: () => boolean; icon: ExoticComponent }>;
 };
 
-export const getActiveTypographyDropdown = ({
+export const getActiveTypographyDropdownItem = ({
   editorState,
   options,
 }: GetActiveTypographyDropdownProps) => {
@@ -40,14 +40,27 @@ export const getActiveTypographyDropdown = ({
   return <IconComp />;
 };
 
-export const getActiveListDropdown = ({
+export const getActiveListDropdownItem = ({
   editorState,
   options,
 }: GetActiveTypographyDropdownProps) => {
   let IconComp = options.bulletList.icon;
-  if (editorState.orderedList) {
+  if (editorState.isOrderedList) {
     IconComp = options.orderedList.icon;
     return <IconComp />;
   }
   return <IconComp />;
+};
+
+export const getActiveAlignDropdownItem = ({
+  options,
+  editorState,
+}: GetActiveTypographyDropdownProps) => {
+  if (editorState.isAlignCenter) {
+    return <options.center.icon />;
+  }
+  if (editorState.isAlignRight) {
+    return <options.right.icon />;
+  }
+  return <options.left.icon />;
 };
