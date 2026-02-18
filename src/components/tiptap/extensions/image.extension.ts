@@ -20,7 +20,6 @@ export const ImageTiptapExtension = Image.extend({
 }).configure({
   resize: {
     enabled: true,
-    directions: ["top-left", "bottom-left", "top-right", "bottom-right"],
     alwaysPreserveAspectRatio: true,
     minHeight: 50,
     minWidth: 50,
