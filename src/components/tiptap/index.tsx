@@ -1,7 +1,6 @@
 import type { Editor } from "@tiptap/react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import TextAlign from "@tiptap/extension-text-align";
 import {
   Bold,
   ChevronDown,
@@ -39,15 +38,14 @@ import {
 import { TiptapImageSkeleton } from "./extensions/file-skeleton";
 import { CustomFileHandler } from "./extensions/file-handler";
 import { ImageTiptapExtension } from "./extensions/image.extension";
+import { TextAlignExtension } from "./extensions/text-align.extension";
 
 const extensions = [
   StarterKit,
+  TextAlignExtension,
   ImageTiptapExtension,
   TiptapImageSkeleton,
   CustomFileHandler,
-  TextAlign.configure({
-    types: ["heading", "paragraph"],
-  }),
 ];
 
 function MenuBar({ editor }: { editor: Editor }) {
@@ -311,7 +309,7 @@ export default function TipTapEditor() {
       <EditorContent editor={editor} />
       <button
         onClick={() => {
-          console.log({ editorr: editor.getJSON() });
+          console.log(editor.getJSON().content);
         }}
       >
         json
