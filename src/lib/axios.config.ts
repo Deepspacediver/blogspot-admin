@@ -21,8 +21,10 @@ axiosInstance.interceptors.response.use(
     const isUnauthorized = responseStatus === 401;
     const wasRequestRetried = !!originalRequest._retried;
     const wasRequestRefreshRoute = originalRequest?.url === "/auth/refresh";
-
-    if (isUnauthorized && !wasRequestRetried && !wasRequestRefreshRoute) {
+    if (!isUnauthorized) {
+      return Promise.reject(error);
+    }
+    if (!wasRequestRetried && !wasRequestRefreshRoute) {
       originalRequest._retried = true;
       try {
         await refreshToken();
