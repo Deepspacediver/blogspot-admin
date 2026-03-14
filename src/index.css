@@ -145,7 +145,7 @@
 
 @layer components {
   .tiptap {
-    @apply outline-none border-1 border-gray-400 min-h-[150px] font-roboto;
+    @apply outline-none border-1 border-t-0 border-zinc-600 min-h-[150px] font-roboto;
 
     > :first-child {
       @apply mt-0;
