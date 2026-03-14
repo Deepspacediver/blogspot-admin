@@ -1,3 +1,5 @@
+import type { JSONContent } from "@tiptap/react";
+
 export type User = {
   id: number;
   email: string;
@@ -18,16 +20,23 @@ export type Comment = {
   updatedAt?: Date;
 };
 
+export const PostState = {
+  published: "published",
+  draft: "draft",
+  all: "all",
+} as const;
+export type PostState = (typeof PostState)[keyof typeof PostState];
+
 export type Post = {
   id: number;
   title: string;
-  content: string;
+  content: JSONContent;
   shortDescription: string;
   authorId: number;
   createdAt: Date;
   updatedAt?: Date;
   image?: string;
-  isPublished: boolean;
+  state: PostState;
 };
 
 export type File = {
