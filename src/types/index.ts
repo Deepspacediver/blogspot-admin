@@ -36,7 +36,7 @@ export type Post = {
   createdAt: Date;
   updatedAt?: Date;
   image?: string;
-  state: PostState;
+  state: Exclude<PostState, "all">;
 };
 
 export type File = {
