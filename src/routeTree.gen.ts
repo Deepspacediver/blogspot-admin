@@ -16,6 +16,7 @@ import { Route as PublicSignUpRouteImport } from './routes/_public/sign-up'
 import { Route as PublicSignInRouteImport } from './routes/_public/sign-in'
 import { Route as AuthenticatedPostsIndexRouteImport } from './routes/_authenticated/posts/index'
 import { Route as AuthenticatedPostsCreateIndexRouteImport } from './routes/_authenticated/posts/create/index'
+import { Route as AuthenticatedPostsPostIdEditRouteRouteImport } from './routes/_authenticated/posts/$postId/edit/route'
 
 const PublicRouteRoute = PublicRouteRouteImport.update({
   id: '/_public',
@@ -51,12 +52,19 @@ const AuthenticatedPostsCreateIndexRoute =
     path: '/posts/create/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPostsPostIdEditRouteRoute =
+  AuthenticatedPostsPostIdEditRouteRouteImport.update({
+    id: '/posts/$postId/edit',
+    path: '/posts/$postId/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/sign-in': typeof PublicSignInRoute
   '/sign-up': typeof PublicSignUpRoute
   '/': typeof AuthenticatedIndexRoute
   '/posts': typeof AuthenticatedPostsIndexRoute
+  '/posts/$postId/edit': typeof AuthenticatedPostsPostIdEditRouteRoute
   '/posts/create': typeof AuthenticatedPostsCreateIndexRoute
 }
 export interface FileRoutesByTo {
@@ -64,6 +72,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof PublicSignUpRoute
   '/': typeof AuthenticatedIndexRoute
   '/posts': typeof AuthenticatedPostsIndexRoute
+  '/posts/$postId/edit': typeof AuthenticatedPostsPostIdEditRouteRoute
   '/posts/create': typeof AuthenticatedPostsCreateIndexRoute
 }
 export interface FileRoutesById {
@@ -74,13 +83,26 @@ export interface FileRoutesById {
   '/_public/sign-up': typeof PublicSignUpRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/posts/': typeof AuthenticatedPostsIndexRoute
+  '/_authenticated/posts/$postId/edit': typeof AuthenticatedPostsPostIdEditRouteRoute
   '/_authenticated/posts/create/': typeof AuthenticatedPostsCreateIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/sign-in' | '/sign-up' | '/' | '/posts' | '/posts/create'
+  fullPaths:
+    | '/sign-in'
+    | '/sign-up'
+    | '/'
+    | '/posts'
+    | '/posts/$postId/edit'
+    | '/posts/create'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/sign-up' | '/' | '/posts' | '/posts/create'
+  to:
+    | '/sign-in'
+    | '/sign-up'
+    | '/'
+    | '/posts'
+    | '/posts/$postId/edit'
+    | '/posts/create'
   id:
     | '__root__'
     | '/_authenticated'
@@ -89,6 +111,7 @@ export interface FileRouteTypes {
     | '/_public/sign-up'
     | '/_authenticated/'
     | '/_authenticated/posts/'
+    | '/_authenticated/posts/$postId/edit'
     | '/_authenticated/posts/create/'
   fileRoutesById: FileRoutesById
 }
@@ -148,18 +171,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPostsCreateIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/posts/$postId/edit': {
+      id: '/_authenticated/posts/$postId/edit'
+      path: '/posts/$postId/edit'
+      fullPath: '/posts/$postId/edit'
+      preLoaderRoute: typeof AuthenticatedPostsPostIdEditRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedPostsIndexRoute: typeof AuthenticatedPostsIndexRoute
+  AuthenticatedPostsPostIdEditRouteRoute: typeof AuthenticatedPostsPostIdEditRouteRoute
   AuthenticatedPostsCreateIndexRoute: typeof AuthenticatedPostsCreateIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedPostsIndexRoute: AuthenticatedPostsIndexRoute,
+  AuthenticatedPostsPostIdEditRouteRoute:
+    AuthenticatedPostsPostIdEditRouteRoute,
   AuthenticatedPostsCreateIndexRoute: AuthenticatedPostsCreateIndexRoute,
 }
 
