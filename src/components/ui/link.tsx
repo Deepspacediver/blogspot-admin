@@ -48,11 +48,13 @@ export function ExternalLink({
   size = "link",
   ...props
 }: ExternalLinkProps) {
-  <a
-    href={href}
-    className={cn(buttonVariants({ variant, size }), className)}
-    {...props}
-  >
-    {children}
-  </a>;
+  return (
+    <a
+      href={href}
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    >
+      {children}
+    </a>
+  );
 }
