@@ -43,7 +43,6 @@ export const CustomFileHandler = FileHandler.configure({
     });
   },
   onPaste: (currentEditor, files, htmlContent) => {
-    console.dir({ files }, { depth: null });
     files.forEach(async (file) => {
       if (htmlContent) {
         return false;
