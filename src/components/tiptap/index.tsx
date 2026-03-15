@@ -1,4 +1,4 @@
-import type { Editor } from "@tiptap/react";
+import type { Editor, JSONContent } from "@tiptap/react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
@@ -139,10 +139,10 @@ function MenuBar({ editor }: { editor: Editor }) {
 
   return (
     <div className="control-group">
-      <div className="button-group border border-b-0 border-zinc-600 p-1 ">
+      <div className="button-group border border-border p-1 ">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant={"editor"} size={"editor"}>
+            <Button type="button" variant={"editor"} size={"editor"}>
               {getActiveTypographyDropdownItem({
                 editorState,
                 options: headingOptions,
@@ -163,7 +163,7 @@ function MenuBar({ editor }: { editor: Editor }) {
                       onSelect();
                     }}
                   >
-                    <Button size={"editor"} variant={"editor"}>
+                    <Button type="button" size={"editor"} variant={"editor"}>
                       <Icon className="text-tertiary size-5" />
                     </Button>
                   </DropdownMenuItem>
@@ -174,7 +174,7 @@ function MenuBar({ editor }: { editor: Editor }) {
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant={"editor"} size={"editor"}>
+            <Button type="button" variant={"editor"} size={"editor"}>
               {getActiveAlignDropdownItem({
                 editorState,
                 options: alignOptions,
@@ -195,7 +195,7 @@ function MenuBar({ editor }: { editor: Editor }) {
                       onSelect();
                     }}
                   >
-                    <Button size={"editor"} variant={"editor"}>
+                    <Button type="button" size={"editor"} variant={"editor"}>
                       <Icon className="text-tertiary size-5" />
                     </Button>
                   </DropdownMenuItem>
@@ -205,6 +205,7 @@ function MenuBar({ editor }: { editor: Editor }) {
           </DropdownMenuContent>
         </DropdownMenu>
         <Button
+          type="button"
           size={"editor"}
           variant={"editor"}
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -214,6 +215,7 @@ function MenuBar({ editor }: { editor: Editor }) {
           <Bold />
         </Button>
         <Button
+          type="button"
           size={"editor"}
           variant={"editor"}
           onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -223,6 +225,7 @@ function MenuBar({ editor }: { editor: Editor }) {
           <Italic />
         </Button>
         <Button
+          type="button"
           size={"editor"}
           variant={"editor"}
           onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -232,6 +235,7 @@ function MenuBar({ editor }: { editor: Editor }) {
           <Strikethrough />
         </Button>
         <Button
+          type="button"
           size={"editor"}
           variant={"editor"}
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -241,7 +245,7 @@ function MenuBar({ editor }: { editor: Editor }) {
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant={"editor"} size={"editor"}>
+            <Button type="button" variant={"editor"} size={"editor"}>
               {getActiveListDropdownItem({
                 editorState,
                 options: listOptions,
@@ -260,7 +264,7 @@ function MenuBar({ editor }: { editor: Editor }) {
                     onSelect();
                   }}
                 >
-                  <Button size={"editor"} variant={"editor"}>
+                  <Button type="button" size={"editor"} variant={"editor"}>
                     <Icon className="text-tertiary size-5" />
                   </Button>
                 </DropdownMenuItem>
@@ -270,6 +274,7 @@ function MenuBar({ editor }: { editor: Editor }) {
         </DropdownMenu>
 
         <Button
+          type="button"
           variant={"editor"}
           size={"editor"}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
@@ -278,6 +283,7 @@ function MenuBar({ editor }: { editor: Editor }) {
           <Quote />
         </Button>
         <Button
+          type="button"
           variant={"editor"}
           size={"editor"}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
@@ -286,10 +292,12 @@ function MenuBar({ editor }: { editor: Editor }) {
         </Button>
 
         <Button
+          type="button"
           variant={"editor"}
           size={"editor"}
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editorState.canUndo}
+          title="Undo"
         >
           <Undo2 />
         </Button>
@@ -298,22 +306,23 @@ function MenuBar({ editor }: { editor: Editor }) {
   );
 }
 
-export default function TipTapEditor() {
+type TipTapEditorProps = {
+  onUpdate: (data: JSONContent) => void;
+  value: JSONContent;
+};
+export default function TipTapEditor({ onUpdate }: TipTapEditorProps) {
   const editor = useEditor({
     extensions,
     shouldRerenderOnTransaction: true,
+    onUpdate: ({ editor }) => {
+      const json = editor.getJSON();
+      onUpdate(json);
+    },
   });
   return (
     <div>
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
-      <button
-        onClick={() => {
-          console.log(editor.getJSON().content);
-        }}
-      >
-        json
-      </button>
     </div>
   );
 }
