@@ -310,8 +310,9 @@ type TipTapEditorProps = {
   onUpdate: (data: JSONContent) => void;
   value: JSONContent;
 };
-export default function TipTapEditor({ onUpdate }: TipTapEditorProps) {
+export default function TipTapEditor({ onUpdate, value }: TipTapEditorProps) {
   const editor = useEditor({
+    content: value,
     extensions,
     shouldRerenderOnTransaction: true,
     onUpdate: ({ editor }) => {

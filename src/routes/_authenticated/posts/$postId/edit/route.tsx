@@ -1,4 +1,4 @@
-import { usePost } from "@/api/posts/query";
+import CreatePostForm from "@/features/posts/create-post.form";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/posts/$postId/edit")({
@@ -7,7 +7,6 @@ export const Route = createFileRoute("/_authenticated/posts/$postId/edit")({
 
 function RouteComponent() {
   const { postId } = Route.useParams();
-  const { data } = usePost({ id: +postId });
 
-  return <div>{data?.data?.title}</div>;
+  return <CreatePostForm postId={+postId} />;
 }

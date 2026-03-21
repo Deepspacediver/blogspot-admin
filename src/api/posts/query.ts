@@ -6,7 +6,7 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createPost, getPost, getPosts } from "./fetch";
+import { createPost, getPost, getPosts, updatePost } from "./fetch";
 
 export const useCreate = () => {
   const queryClient = useQueryClient();
@@ -33,12 +33,22 @@ export const postsQueryOptions = () =>
 
 export const usePosts = () => useSuspenseInfiniteQuery(postsQueryOptions());
 
-export const postQueryOptions = ({ id }: { id: number, }) => {
+export const postQueryOptions = ({ id }: { id?: number; }) => {
   return queryOptions({
     queryKey: ["posts", id],
-    queryFn: () => getPost({ id }),
+    queryFn: id ? () => getPost({ id }) : undefined,
   });
 };
 
 
-export const usePost = ({ id }: { id: number; }) => useSuspenseQuery(postQueryOptions({ id }));
+export const usePost = ({ id }: { id?: number; }) => useSuspenseQuery(postQueryOptions({ id }));
+
+export const useUpdate = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updatePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};
