@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/card";
 import { Save } from "lucide-react";
 import { useNavigate, useCanGoBack, useRouter } from "@tanstack/react-router";
+import { ExternalLink } from "@/components/ui/link";
+import { PostState } from "@/types";
+
 const formSchema = z.object({
   title: z.string().min(1),
   content: z.looseObject({}),
@@ -27,29 +30,58 @@ const formSchema = z.object({
   isPublished: z.boolean().default(false),
 });
 
-type FormSchema = z.infer<typeof formSchema>;
+const editFormSchema = z.object({
+  ...formSchema.shape,
+  image: z.union([z.undefined(), z.instanceof(FileList)]).refine(
+    (fileList) => {
+      if (!fileList) return true;
+      return fileList.length <= 1;
+    },
+    {
+      message: "Image is required",
+    },
+  ),
+});
 
-export default function CreatePostForm() {
+type FormSchema = z.infer<typeof editFormSchema | typeof formSchema>;
+
+type CreatePostFormProps = {
+  postId?: number;
+};
+export default function CreatePostForm({ postId }: CreatePostFormProps) {
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const navigate = useNavigate();
 
+  const { data: postData } = postsAPI.usePost({ id: postId });
+  const isEdit = !!postId;
   const form = useForm({
     defaultValues: {
-      title: "",
-      shortDescription: "",
-      isPublished: false,
-      content: {},
+      title: postData?.title || "",
+      shortDescription: postData?.shortDescription || "",
+      isPublished: postData?.state === PostState.published || false,
+      content: postData?.content || {},
+      image: undefined,
     },
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(isEdit ? editFormSchema : formSchema),
   });
 
   const { mutate: createPost, isPending } = postsAPI.useCreate();
+  const { mutate: editPost, isPending: isEditPending } = postsAPI.useUpdate();
+
   const handleSubmit = (data: FormSchema) => {
+    if (postId) {
+      return editPost({
+        ...data,
+        id: postId,
+        state: data.isPublished ? PostState.published : PostState.draft,
+        image: data.image?.[0] || undefined,
+      });
+    }
     createPost({
       ...data,
-      state: data.isPublished ? "published" : "draft",
-      image: data.image[0],
+      state: data.isPublished ? PostState.published : PostState.draft,
+      image: data?.image?.[0],
     });
   };
   const formErrors = form?.formState?.errors;
@@ -59,7 +91,7 @@ export default function CreatePostForm() {
       <Card className="shadow-all-3xl border-none bg-background/50 backdrop-blur-sm">
         <CardHeader className="pb-4">
           <CardTitle className="text-3xl font-bold tracking-tight">
-            Create New Post
+            {isEdit ? "Edit Post" : "Create New Post"}
           </CardTitle>
           <p className="text-muted-foreground">
             Share your thoughts with the world. Fill in the details below.
@@ -98,8 +130,20 @@ export default function CreatePostForm() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="image" className="text-sm font-semibold">
+                  <Label
+                    htmlFor="image"
+                    className="text-sm font-semibold gap-1"
+                  >
                     Featured Image
+                    {postData.headerImageUrl && (
+                      <ExternalLink
+                        className="text-xs"
+                        target="_blank"
+                        href={postData.headerImageUrl}
+                      >
+                        (current photo)
+                      </ExternalLink>
+                    )}
                   </Label>
                   <div className="relative space-y-0.5">
                     <Input
@@ -126,9 +170,18 @@ export default function CreatePostForm() {
                     <p className="text-sm text-muted-foreground">
                       Make this post visible to everyone.
                     </p>
-                    <Switch
-                      {...form.register("isPublished")}
-                      id="isPublished"
+                    <Controller
+                      control={form.control}
+                      name="isPublished"
+                      render={({ field: { onChange, value } }) => {
+                        return (
+                          <Switch
+                            checked={value}
+                            onCheckedChange={onChange}
+                            id="isPublished"
+                          />
+                        );
+                      }}
                     />
                   </div>
                 </Label>
@@ -159,7 +212,7 @@ export default function CreatePostForm() {
                   }
                   navigate({ to: "/" });
                 }}
-                disabled={isPending}
+                disabled={isPending || isEditPending}
               >
                 Back
               </Button>
@@ -167,7 +220,7 @@ export default function CreatePostForm() {
             <Button
               type="submit"
               className="px-8 bg-primary hover:bg-primary/90 min-w-28"
-              isLoading={isPending}
+              isLoading={isPending || isEditPending}
             >
               <Save className="w-4 h-4 mr-2" />
               Publish Post
