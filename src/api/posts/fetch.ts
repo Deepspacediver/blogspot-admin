@@ -39,7 +39,7 @@ type GetPostProps = {
 };
 
 export type PostReturn = Pick<User, "username" | "email"> &
-  Pick<Post, "authorId" | "title" | "createdAt" | "shortDescription"> & {
+  Pick<Post, "authorId" | "title" | "createdAt" | "shortDescription" | "content" | "state"> & {
     headerImageUrl: string | null;
     pictureUrl: string | null;
   };
@@ -47,7 +47,8 @@ export type PostReturn = Pick<User, "username" | "email"> &
 
 export const getPost = async ({ id, state }: GetPostProps) => {
   const stateParam = state ? `state=${state}` : "";
-  return await axiosInstance.get<PostReturn>(`/posts/${id}?${stateParam}`);
+  const { data } = await axiosInstance.get<PostReturn>(`/posts/${id}?${stateParam}`);
+  return data;
 };
 
 type CreatePostProps = {
@@ -67,4 +68,15 @@ export const createPost = async (data: CreatePostProps) => {
   return await axiosInstance.postForm(`/posts`, formData);
 };
 
+type UpdatePostProps = Partial<CreatePostProps> & { id: number; };
 
+export const updatePost = async ({ id, ...data }: UpdatePostProps) => {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      const parsedValue = typeof value === "object" && !(value instanceof File) ? JSON.stringify(value) : value;
+      formData.append(key, parsedValue);
+    }
+  });
+  return await axiosInstance.patchForm(`/posts/${id}`, formData);
+};
