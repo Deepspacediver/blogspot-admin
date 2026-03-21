@@ -11,7 +11,7 @@ function Index() {
   const posts = data.pages.flatMap((page) => page.data);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(672px,1fr))] gap-8 justify-items-center items-center lg:max-w-[90%] mx-auto">
+    <div className="p-4 grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(672px,1fr))] gap-8 justify-items-center items-center lg:max-w-[90%] mx-auto">
       {posts.map((post) => {
         return <PostPreview key={post.id} data={post} />;
       })}
