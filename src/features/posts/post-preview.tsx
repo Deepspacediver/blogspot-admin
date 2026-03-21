@@ -42,10 +42,10 @@ export default function PostPreview({ data }: PostPreviewProps) {
       size={"link"}
       params={{ postId: String(id) }}
       variant={"wrapper"}
-      className="flex shadow-all-xl"
+      className="shadow-all-xl w-full"
     >
-      <article className="flex flex-wrap sm:flex-nowrap overflow-hidden min-h-60 lg:max-h-60 rounded-md">
-        <div className="sm:basis-[45%] relative">
+      <article className="flex w-full flex-wrap sm:flex-nowrap overflow-hidden min-h-60 lg:max-h-60 rounded-md">
+        <div className="sm:basis-[45%] w-full relative">
           <Badge
             className="absolute top-2 left-2 text-sm uppercase"
             variant={STATE_BADGE_MAP[state]}
@@ -53,12 +53,12 @@ export default function PostPreview({ data }: PostPreviewProps) {
             {state}
           </Badge>
           <img
-            className="object-cover h-full w-full"
+            className="object-cover w-full h-full "
             src={headerImageUrl || placeholderImgUrl}
             alt=""
           />
         </div>
-        <section className="sm:basis-[55%] flex justify-between flex-col gap-6 p-6">
+        <section className="sm:basis-[55%] w-full flex justify-between flex-col gap-6 p-6">
           <h2 className="text-xl font-semibold text-primary">{title}</h2>
           <p className="text-zinc-400 line-clamp-3">{shortDescription}</p>
           <div>
