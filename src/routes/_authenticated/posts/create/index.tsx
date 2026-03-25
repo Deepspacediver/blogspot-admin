@@ -1,4 +1,4 @@
-import CreatePostForm from "@/features/posts/create-post.form";
+import PostForm from "@/features/posts/post.form";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/posts/create/")({
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authenticated/posts/create/")({
 function RouteComponent() {
   return (
     <div className="p-4">
-      <CreatePostForm />
+      <PostForm />
     </div>
   );
 }

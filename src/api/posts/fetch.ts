@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/axios.config";
-import { PostState, type Post, type User } from "@/types";
+import { PostState, type Post, type User, type Comment } from "@/types";
 import type { JSONContent } from "@tiptap/react";
 
 export type PostsReturn = Pick<
@@ -38,11 +38,24 @@ type GetPostProps = {
   state?: PostState;
 };
 
-export type PostReturn = Pick<User, "username" | "email"> &
-  Pick<Post, "authorId" | "title" | "createdAt" | "shortDescription" | "content" | "state"> & {
-    headerImageUrl: string | null;
-    pictureUrl: string | null;
-  };
+export type PostReturn = {
+  post: Pick<
+    Post & User & { headerImageUrl?: string; },
+    | "id"
+    | "title"
+    | "image"
+    | "createdAt"
+    | "state"
+    | "email"
+    | "username"
+    | "pictureUrl"
+    | "shortDescription"
+    | "headerImageUrl"
+    | "content"
+  >;
+  comments: Pick<Comment & User, "id" | "content" | "createdAt" | "pictureUrl" | "username" | "email">[];
+};
+
 
 
 export const getPost = async ({ id, state }: GetPostProps) => {
@@ -62,8 +75,10 @@ type CreatePostProps = {
 export const createPost = async (data: CreatePostProps) => {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
-    const parsedValue = typeof value === "object" && !(value instanceof File) ? JSON.stringify(value) : value;
-    formData.append(key, parsedValue);
+    if (value !== undefined && value !== null) {
+      const parsedValue = typeof value === "object" && !(value instanceof File) ? JSON.stringify(value) : value;
+      formData.append(key, parsedValue);
+    }
   });
   return await axiosInstance.postForm(`/posts`, formData);
 };

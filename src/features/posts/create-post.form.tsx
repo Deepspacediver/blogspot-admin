@@ -9,7 +9,6 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Card,
   CardContent,
   CardFooter,
   CardHeader,
@@ -19,6 +18,7 @@ import { Save } from "lucide-react";
 import { useNavigate, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { ExternalLink } from "@/components/ui/link";
 import { PostState } from "@/types";
+import type { PostReturn } from "@/api/posts/fetch";
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -46,15 +46,16 @@ const editFormSchema = z.object({
 type FormSchema = z.infer<typeof editFormSchema | typeof formSchema>;
 
 type CreatePostFormProps = {
-  postId?: number;
+  data?: PostReturn["post"];
 };
-export default function CreatePostForm({ postId }: CreatePostFormProps) {
+export default function CreatePostForm({
+  data: postData,
+}: CreatePostFormProps) {
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const navigate = useNavigate();
 
-  const { data: postData } = postsAPI.usePost({ id: postId });
-  const isEdit = !!postId;
+  const isEdit = !!postData;
   const form = useForm({
     defaultValues: {
       title: postData?.title || "",
@@ -70,10 +71,10 @@ export default function CreatePostForm({ postId }: CreatePostFormProps) {
   const { mutate: editPost, isPending: isEditPending } = postsAPI.useUpdate();
 
   const handleSubmit = (data: FormSchema) => {
-    if (postId) {
+    if (postData) {
       return editPost({
         ...data,
-        id: postId,
+        id: postData.id,
         state: data.isPublished ? PostState.published : PostState.draft,
         image: data.image?.[0] || undefined,
       });
@@ -87,147 +88,142 @@ export default function CreatePostForm({ postId }: CreatePostFormProps) {
   const formErrors = form?.formState?.errors;
 
   return (
-    <div className="container mx-auto max-w-4xl py-10 px-4">
-      <Card className="shadow-all-3xl border-none bg-background/50 backdrop-blur-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-3xl font-bold tracking-tight">
-            {isEdit ? "Edit Post" : "Create New Post"}
-          </CardTitle>
-          <p className="text-muted-foreground">
-            Share your thoughts with the world. Fill in the details below.
-          </p>
-        </CardHeader>
-        <form noValidate onSubmit={form.handleSubmit(handleSubmit)}>
-          <CardContent className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title" className="text-sm font-semibold">
-                    Post Title
-                  </Label>
-                  <Input
-                    {...form.register("title")}
-                    placeholder="Enter a catchy title..."
-                    className="h-11"
-                  />
-                  <FormMessage message={formErrors.title?.message} />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="shortDescription"
-                    className="text-sm font-semibold"
-                  >
-                    Short Description
-                  </Label>
-                  <Textarea
-                    {...form.register("shortDescription")}
-                    placeholder="Briefly describe what this post is about..."
-                  />
-                  <FormMessage message={formErrors.shortDescription?.message} />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="image"
-                    className="text-sm font-semibold gap-1"
-                  >
-                    Featured Image
-                    {postData.headerImageUrl && (
-                      <ExternalLink
-                        className="text-xs"
-                        target="_blank"
-                        href={postData.headerImageUrl}
-                      >
-                        (current photo)
-                      </ExternalLink>
-                    )}
-                  </Label>
-                  <div className="relative space-y-0.5">
-                    <Input
-                      {...form.register("image")}
-                      type="file"
-                      accept="image/png, image/gif, image/jpeg"
-                      multiple={false}
-                      id="image-upload"
-                    />
-
-                    <p className="text-xs text-muted-foreground/60">
-                      PNG, JPG or GIF (max. 5MB)
-                    </p>
-                  </div>
-                  <FormMessage message={formErrors.image?.message} />
-                </div>
-
-                <Label
-                  htmlFor="isPublished"
-                  className="flex flex-col items-start w-full"
-                >
-                  <p className="text-sm font-semibold">Publish Immediately</p>
-                  <div className="flex items-center w-full justify-between p-4 border rounded-lg bg-muted/20">
-                    <p className="text-sm text-muted-foreground">
-                      Make this post visible to everyone.
-                    </p>
-                    <Controller
-                      control={form.control}
-                      name="isPublished"
-                      render={({ field: { onChange, value } }) => {
-                        return (
-                          <Switch
-                            checked={value}
-                            onCheckedChange={onChange}
-                            id="isPublished"
-                          />
-                        );
-                      }}
-                    />
-                  </div>
+    <>
+      <CardHeader className="pb-4">
+        <CardTitle className="text-3xl font-bold tracking-tight">
+          {isEdit ? "Edit Post" : "Create New Post"}
+        </CardTitle>
+        <p className="text-muted-foreground">
+          Share your thoughts with the world. Fill in the details below.
+        </p>
+      </CardHeader>
+      <form noValidate onSubmit={form.handleSubmit(handleSubmit)}>
+        <CardContent className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-sm font-semibold">
+                  Post Title
                 </Label>
+                <Input
+                  {...form.register("title")}
+                  placeholder="Enter a catchy title..."
+                  className="h-11"
+                />
+                <FormMessage message={formErrors.title?.message} />
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="shortDescription"
+                  className="text-sm font-semibold"
+                >
+                  Short Description
+                </Label>
+                <Textarea
+                  {...form.register("shortDescription")}
+                  placeholder="Briefly describe what this post is about..."
+                />
+                <FormMessage message={formErrors.shortDescription?.message} />
               </div>
             </div>
 
-            <div className="space-y-4 ">
-              <Label className="text-lg font-semibold">Post Content</Label>
-              <div className="pb-2">
-                <Controller
-                  control={form.control}
-                  name="content"
-                  render={({ field: { onChange, value } }) => (
-                    <TipTapEditor onUpdate={onChange} value={value} />
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="image" className="text-sm font-semibold gap-1">
+                  Featured Image
+                  {postData?.headerImageUrl && (
+                    <ExternalLink
+                      className="text-xs"
+                      target="_blank"
+                      href={postData.headerImageUrl}
+                    >
+                      (current photo)
+                    </ExternalLink>
                   )}
-                />
+                </Label>
+                <div className="relative space-y-0.5">
+                  <Input
+                    {...form.register("image")}
+                    type="file"
+                    accept="image/png, image/gif, image/jpeg"
+                    multiple={false}
+                    id="image-upload"
+                  />
+
+                  <p className="text-xs text-muted-foreground/60">
+                    PNG, JPG or GIF (max. 5MB)
+                  </p>
+                </div>
+                <FormMessage message={formErrors.image?.message} />
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-end gap-4 border-t pt-6">
-            {canGoBack && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  if (canGoBack) {
-                    return router.history.back();
-                  }
-                  navigate({ to: "/" });
-                }}
-                disabled={isPending || isEditPending}
+
+              <Label
+                htmlFor="isPublished"
+                className="flex flex-col items-start w-full"
               >
-                Back
-              </Button>
-            )}
+                <p className="text-sm font-semibold">Publish Immediately</p>
+                <div className="flex items-center w-full justify-between p-4 border rounded-lg bg-muted/20">
+                  <p className="text-sm text-foreground font-normal">
+                    Make this post visible to everyone.
+                  </p>
+                  <Controller
+                    control={form.control}
+                    name="isPublished"
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <Switch
+                          checked={value}
+                          onCheckedChange={onChange}
+                          id="isPublished"
+                        />
+                      );
+                    }}
+                  />
+                </div>
+              </Label>
+            </div>
+          </div>
+
+          <div className="space-y-4 ">
+            <Label className="text-lg font-semibold">Post Content</Label>
+            <div className="pb-2">
+              <Controller
+                control={form.control}
+                name="content"
+                render={({ field: { onChange, value } }) => (
+                  <TipTapEditor onUpdate={onChange} value={value} />
+                )}
+              />
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-end gap-4 border-t pt-6">
+          {canGoBack && (
             <Button
-              type="submit"
-              className="px-8 bg-primary hover:bg-primary/90 min-w-28"
-              isLoading={isPending || isEditPending}
+              type="button"
+              variant="outline"
+              onClick={() => {
+                if (canGoBack) {
+                  return router.history.back();
+                }
+                navigate({ to: "/" });
+              }}
+              disabled={isPending || isEditPending}
             >
-              <Save className="w-4 h-4 mr-2" />
-              Publish Post
+              Back
             </Button>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+          )}
+          <Button
+            type="submit"
+            className="px-8 bg-primary hover:bg-primary/90 min-w-28"
+            isLoading={isPending || isEditPending}
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {isEdit ? "Edit post" : "Create post"}
+          </Button>
+        </CardFooter>
+      </form>
+    </>
   );
 }
