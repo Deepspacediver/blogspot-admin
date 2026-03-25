@@ -1,4 +1,4 @@
-import PostForm from "@/features/posts/post.form";
+import PostCard from "@/features/posts/post.card";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/posts/$postId/edit")({
@@ -8,5 +8,5 @@ export const Route = createFileRoute("/_authenticated/posts/$postId/edit")({
 function RouteComponent() {
   const { postId } = Route.useParams();
 
-  return <PostForm postId={+postId} />;
+  return <PostCard postId={+postId} />;
 }
