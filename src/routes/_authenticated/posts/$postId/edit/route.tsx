@@ -1,4 +1,4 @@
-import CreatePostForm from "@/features/posts/create-post.form";
+import PostForm from "@/features/posts/post.form";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/posts/$postId/edit")({
@@ -8,5 +8,5 @@ export const Route = createFileRoute("/_authenticated/posts/$postId/edit")({
 function RouteComponent() {
   const { postId } = Route.useParams();
 
-  return <CreatePostForm postId={+postId} />;
+  return <PostForm postId={+postId} />;
 }
