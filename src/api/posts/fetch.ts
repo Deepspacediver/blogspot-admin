@@ -99,3 +99,7 @@ export const updatePost = async ({ id, ...data }: UpdatePostProps) => {
 export const deleteComment = async ({ postId, id }: { postId: number, id: number; }) => {
   return await axiosInstance.delete(`/posts/${postId}/comments/${id}`);
 };
+
+export const deletePost = async ({ id }: { id: number; }) => {
+  return await axiosInstance.delete(`/posts/${id}`);
+};

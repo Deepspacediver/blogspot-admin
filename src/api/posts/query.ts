@@ -6,7 +6,8 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createPost, deleteComment, getPost, getPosts, updatePost } from "./fetch";
+import { createPost, deleteComment, deletePost, getPost, getPosts, updatePost } from "./fetch";
+import { useNavigate } from "@tanstack/react-router";
 
 export const useCreate = () => {
   const queryClient = useQueryClient();
@@ -53,6 +54,18 @@ export const useUpdate = () => {
   });
 };
 
+
+export const useDelete = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: deletePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      navigate({ to: "/" });
+    }
+  });
+};
 
 export const useDeleteComment = ({ postId }: { postId: number; }) => {
   const queryClient = useQueryClient();
