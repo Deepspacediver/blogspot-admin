@@ -1,14 +1,15 @@
 import type { PostReturn } from "@/api/posts/fetch";
+import Comment from "./comment";
 
 type CommentsTableProps = {
-  data: PostReturn["comments"];
+  data: PostReturn;
 };
 
 export default function CommentsTable({ data }: CommentsTableProps) {
   return (
     <div>
-      {data.map((comment) => (
-        <div key={comment.id}>{comment.content}</div>
+      {data.comments.map((comment) => (
+        <Comment key={comment.id} data={comment} postId={data.post.id} />
       ))}
     </div>
   );
