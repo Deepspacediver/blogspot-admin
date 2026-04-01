@@ -95,3 +95,7 @@ export const updatePost = async ({ id, ...data }: UpdatePostProps) => {
   });
   return await axiosInstance.patchForm(`/posts/${id}`, formData);
 };
+
+export const deleteComment = async ({ postId, id }: { postId: number, id: number; }) => {
+  return await axiosInstance.delete(`/posts/${postId}/comments/${id}`);
+};
