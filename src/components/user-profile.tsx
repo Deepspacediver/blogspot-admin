@@ -16,21 +16,21 @@ export function UserContent({
 }: UnLoggedUserProfileProps) {
   const { pictureUrl, username, email } = data;
   return (
-    <div className={cn("flex gap-1 items-center", className)}>
+    <div className={cn("flex gap-1 items-center ", className)}>
       <div
         className={cn(
-          "rounded-full overflow-hidden ",
+          "rounded-full overflow-hidden shrink-0 ",
           !pictureUrl && "bg-secondary",
         )}
       >
         {pictureUrl ? (
           <img src={pictureUrl} width={24} height={24} alt="user picture" />
         ) : (
-          <UserSVG className="size-10 p-1" />
+          <UserSVG className="size-10 p-1 shrink-0" />
         )}
       </div>
-      <div className="flex flex-col">
-        <p>{username || email}</p>
+      <div className="flex flex-col truncate">
+        <p className="flex-1 truncate">{username || email}</p>
         {children}
       </div>
     </div>
