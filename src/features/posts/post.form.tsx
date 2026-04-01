@@ -19,6 +19,7 @@ import { useNavigate, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { ExternalLink } from "@/components/ui/link";
 import { PostState } from "@/types";
 import type { PostReturn } from "@/api/posts/fetch";
+import { DeletePostDialog } from "./delete-post.dialog";
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -67,6 +68,8 @@ export default function PostForm({ data: postData }: PostFormProps) {
 
   const { mutate: createPost, isPending } = postsAPI.useCreate();
   const { mutate: editPost, isPending: isEditPending } = postsAPI.useUpdate();
+  const { mutate: deletePost, isPending: isDeletePending } =
+    postsAPI.useDelete();
 
   const handleSubmit = (data: FormSchema) => {
     if (postData) {
@@ -90,6 +93,15 @@ export default function PostForm({ data: postData }: PostFormProps) {
       <CardHeader className="pb-4">
         <CardTitle className="text-3xl font-bold tracking-tight">
           {isEdit ? "Edit Post" : "Create New Post"}
+          {postData?.id && (
+            <DeletePostDialog
+              onClick={() => {
+                deletePost({
+                  id: postData.id,
+                });
+              }}
+            />
+          )}
         </CardTitle>
         <p className="text-muted-foreground">
           Share your thoughts with the world. Fill in the details below.
@@ -215,7 +227,7 @@ export default function PostForm({ data: postData }: PostFormProps) {
           <Button
             type="submit"
             className="px-8 bg-primary hover:bg-primary/90 min-w-28"
-            isLoading={isPending || isEditPending}
+            isLoading={isPending || isEditPending || isDeletePending}
           >
             <Save className="w-4 h-4 mr-2" />
             {isEdit ? "Edit post" : "Create post"}
