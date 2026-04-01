@@ -26,7 +26,11 @@ function EditPostView({ postId }: PostCardProps) {
         <TabsTrigger className="text-lg w-1/2" value="post">
           Post
         </TabsTrigger>
-        <TabsTrigger className="text-lg w-1/2" value="comments">
+        <TabsTrigger
+          disabled={data.comments.length === 0}
+          className="text-lg w-1/2"
+          value="comments"
+        >
           Comments
         </TabsTrigger>
       </TabsList>
@@ -34,7 +38,7 @@ function EditPostView({ postId }: PostCardProps) {
         <PostForm data={data.post} />
       </TabsContent>
       <TabsContent value="comments">
-        <CommentsTable data={data.comments} />
+        <CommentsTable data={data} />
       </TabsContent>
     </Tabs>
   );
