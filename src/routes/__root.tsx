@@ -8,6 +8,7 @@ import {
   redirect,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { Toaster } from "sonner";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -45,6 +46,15 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          classNames: {
+            error: "!bg-error !text-error-foreground",
+            success: "!bg-success !text-success-foreground",
+          },
+        }}
+      />
       <Outlet />
       <TanStackRouterDevtools />
       <ReactQueryDevtools />
