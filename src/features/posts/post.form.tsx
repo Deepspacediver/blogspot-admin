@@ -91,7 +91,7 @@ export default function PostForm({ data: postData }: PostFormProps) {
   return (
     <>
       <CardHeader className="pb-4">
-        <CardTitle className="text-3xl font-bold tracking-tight space-x-1.5">
+        <CardTitle className="text-3xl font-bold tracking-tight gap-1.5 flex items-center">
           <h2 className="inline-block">
             {isEdit ? "Edit Post" : "Create New Post"}
           </h2>

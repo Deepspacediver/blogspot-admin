@@ -16,7 +16,7 @@ export function DeletePostDialog({ onClick }: { onClick: () => void }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className="p-1" size={"icon"} variant="ghost">
+        <Button size={"icon"} variant="ghost">
           <Trash2 />
         </Button>
       </AlertDialogTrigger>
