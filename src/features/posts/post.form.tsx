@@ -91,8 +91,10 @@ export default function PostForm({ data: postData }: PostFormProps) {
   return (
     <>
       <CardHeader className="pb-4">
-        <CardTitle className="text-3xl font-bold tracking-tight">
-          {isEdit ? "Edit Post" : "Create New Post"}
+        <CardTitle className="text-3xl font-bold tracking-tight space-x-1.5">
+          <h2 className="inline-block">
+            {isEdit ? "Edit Post" : "Create New Post"}
+          </h2>
           {postData?.id && (
             <DeletePostDialog
               onClick={() => {
@@ -117,6 +119,7 @@ export default function PostForm({ data: postData }: PostFormProps) {
                 </Label>
                 <Input
                   {...form.register("title")}
+                  id="title"
                   placeholder="Enter a catchy title..."
                   className="h-11"
                 />
@@ -132,6 +135,7 @@ export default function PostForm({ data: postData }: PostFormProps) {
                 </Label>
                 <Textarea
                   {...form.register("shortDescription")}
+                  id="shortDescription"
                   placeholder="Briefly describe what this post is about..."
                 />
                 <FormMessage message={formErrors.shortDescription?.message} />
@@ -158,7 +162,7 @@ export default function PostForm({ data: postData }: PostFormProps) {
                     type="file"
                     accept="image/png, image/gif, image/jpeg"
                     multiple={false}
-                    id="image-upload"
+                    id="image"
                   />
 
                   <p className="text-xs text-muted-foreground/60">
