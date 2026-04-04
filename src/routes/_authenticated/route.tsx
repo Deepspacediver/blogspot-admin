@@ -7,11 +7,11 @@ export const Route = createFileRoute("/_authenticated")({
 
 function RouteComponent() {
   return (
-    <div>
+    <>
       <Header />
       <main>
         <Outlet />
       </main>
-    </div>
+    </>
   );
 }
