@@ -1,9 +1,17 @@
-import { usePosts } from "@/api/posts/query";
+import { postsQueryOptions, usePosts } from "@/api/posts/query";
 import PostPreview from "@/features/posts/post-preview";
 import { createFileRoute } from "@tanstack/react-router";
+import Loader from "@/components/loader";
+import { userQueryOptions } from "@/api/users/query";
 
 export const Route = createFileRoute("/_authenticated/")({
   component: Index,
+  loader: ({ context: { queryClient } }) => {
+    queryClient.ensureInfiniteQueryData(postsQueryOptions());
+    queryClient.ensureQueryData(userQueryOptions);
+  },
+
+  pendingComponent: Loader,
 });
 
 function Index() {
