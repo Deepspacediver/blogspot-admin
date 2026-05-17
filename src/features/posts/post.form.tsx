@@ -20,6 +20,8 @@ import { ExternalLink } from "@/components/ui/link";
 import { PostState } from "@/types";
 import type { PostReturn } from "@/api/posts/fetch";
 import { DeletePostDialog } from "./delete-post.dialog";
+import { useEditor } from "@tiptap/react";
+import { extensions } from "@/components/tiptap/extensions";
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -70,20 +72,43 @@ export default function PostForm({ data: postData }: PostFormProps) {
   const { mutate: editPost, isPending: isEditPending } = postsAPI.useUpdate();
   const { mutate: deletePost, isPending: isDeletePending } =
     postsAPI.useDelete();
+  const editor = useEditor({
+    content: postData?.content,
+    extensions,
+    shouldRerenderOnTransaction: true,
+    onUpdate: ({ editor }) => {
+      const json = editor.getJSON();
+      form.setValue("content", json);
+    },
+  });
+
+  const getImagesInEditor = () => {
+    const imageIds: number[] = [];
+    editor.state.doc.descendants((node) => {
+      if (node.type.name === "image") {
+        imageIds.push(node.attrs.fileId as number);
+      }
+    });
+
+    return imageIds;
+  };
 
   const handleSubmit = (data: FormSchema) => {
+    const fileIds = getImagesInEditor();
     if (postData) {
       return editPost({
         ...data,
         id: postData.id,
         state: data.isPublished ? PostState.published : PostState.draft,
         image: data.image?.[0] || undefined,
+        fileIds,
       });
     }
     createPost({
       ...data,
       state: data.isPublished ? PostState.published : PostState.draft,
       image: data?.image?.[0],
+      fileIds,
     });
   };
   const formErrors = form?.formState?.errors;
@@ -205,9 +230,7 @@ export default function PostForm({ data: postData }: PostFormProps) {
               <Controller
                 control={form.control}
                 name="content"
-                render={({ field: { onChange, value } }) => (
-                  <TipTapEditor onUpdate={onChange} value={value} />
-                )}
+                render={() => <TipTapEditor editor={editor} />}
               />
             </div>
           </div>

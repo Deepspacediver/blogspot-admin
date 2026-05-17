@@ -70,6 +70,7 @@ type CreatePostProps = {
   shortDescription: string;
   image?: File;
   state?: PostState;
+  fileIds?: number[];
 };
 
 export const createPost = async (data: CreatePostProps) => {
