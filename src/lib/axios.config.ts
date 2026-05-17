@@ -7,13 +7,31 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// TODO handle multiple requests
+
+const queue: { reject: (error: unknown) => unknown, resolve: (token?: string) => string | unknown; }[] = [];
+let isRefreshing = false;
+
+
+const processQueue = (error: unknown, token?: string) => {
+  queue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  queue.length = 0;
+};
+
 axiosInstance.interceptors.response.use(
   function onFulfilled(response) {
     return response;
   },
-  async function onRejected(error) {
+  async function onRejected(error,) {
     const originalRequest = error.config;
+    if (!originalRequest || originalRequest?.skipInterceptor) {
+      return Promise.reject(error);
+    }
 
     const responseStatus = (error?.response?.status || error?.status) as
       | number
@@ -25,20 +43,43 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
     if (!wasRequestRetried && !wasRequestRefreshRoute) {
-      originalRequest._retried = true;
-      try {
-        await refreshToken();
-      } catch {
-        setIsLoggedIn(false);
-        return Promise.reject(error);
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          return queue.push({ resolve, reject });
+        }).then(() => {
+          return axiosInstance(originalRequest);
+        }).catch((e) => Promise.reject(e));
       }
-      return axiosInstance(originalRequest);
+      isRefreshing = true;
+      originalRequest._retried = true;
+
+      try {
+        return new Promise((resolve, reject) => {
+          refreshToken().then(() => {
+            processQueue(null);
+            return resolve(axiosInstance(originalRequest));
+          }).catch(e => {
+            isRefreshing = false;
+            processQueue(e);
+            reject(e);
+          }).then(() => {
+            isRefreshing = false;
+          });
+
+        });
+      } catch (e) {
+        isRefreshing = false;
+        processQueue(e);
+        setIsLoggedIn(false);
+        return Promise.reject(e);
+      }
     } else {
       setIsLoggedIn(false);
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;
