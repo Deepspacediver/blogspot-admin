@@ -12,11 +12,13 @@ import { toast } from "sonner";
 
 export const useCreate = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: createPost,
     onSuccess: () => {
       toast.success("Post created successfully");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      navigate({ to: "/" });
     },
     onError: () => {
       toast.error("Failed to create post. Please try again.");
