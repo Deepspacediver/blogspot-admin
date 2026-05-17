@@ -1,6 +1,5 @@
-import type { Editor, JSONContent } from "@tiptap/react";
-import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import type { Editor } from "@tiptap/react";
+import { EditorContent, useEditorState } from "@tiptap/react";
 import {
   Bold,
   ChevronDown,
@@ -35,18 +34,6 @@ import {
   getActiveListDropdownItem,
   getActiveTypographyDropdownItem,
 } from "./helpers/get-active-dropdown";
-import { TiptapImageSkeleton } from "./extensions/file-skeleton";
-import { CustomFileHandler } from "./extensions/file-handler";
-import { ImageTiptapExtension } from "./extensions/image.extension";
-import { TextAlignExtension } from "./extensions/text-align.extension";
-
-const extensions = [
-  StarterKit,
-  TextAlignExtension,
-  ImageTiptapExtension,
-  TiptapImageSkeleton,
-  CustomFileHandler,
-];
 
 function MenuBar({ editor }: { editor: Editor }) {
   const editorState = useEditorState({
@@ -307,19 +294,9 @@ function MenuBar({ editor }: { editor: Editor }) {
 }
 
 type TipTapEditorProps = {
-  onUpdate: (data: JSONContent) => void;
-  value: JSONContent;
+  editor: Editor;
 };
-export default function TipTapEditor({ onUpdate, value }: TipTapEditorProps) {
-  const editor = useEditor({
-    content: value,
-    extensions,
-    shouldRerenderOnTransaction: true,
-    onUpdate: ({ editor }) => {
-      const json = editor.getJSON();
-      onUpdate(json);
-    },
-  });
+export default function TipTapEditor({ editor }: TipTapEditorProps) {
   return (
     <div>
       <MenuBar editor={editor} />
