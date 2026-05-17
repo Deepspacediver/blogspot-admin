@@ -1,4 +1,5 @@
 import { uploadFile } from "@/api/files/fetch";
+import { toast } from "sonner";
 import FileHandler from "@tiptap/extension-file-handler";
 
 export const CustomFileHandler = FileHandler.configure({
@@ -13,11 +14,9 @@ export const CustomFileHandler = FileHandler.configure({
   onDrop: (currentEditor, files, pos) => {
     files.forEach(async (file) => {
       const historySnapshot = currentEditor.state;
-      const insertionRange = { from: pos - 1, to: pos };
       currentEditor
         .chain()
         .insertContentAt(pos, `<tiptap-image-skeleton/>`)
-        .focus()
         .run();
       try {
         const { id, url } = await uploadFile({ file });
@@ -26,7 +25,7 @@ export const CustomFileHandler = FileHandler.configure({
         currentEditor.view.updateState(historySnapshot);
         currentEditor
           .chain()
-          .insertContentAt(insertionRange, {
+          .insertContentAt(pos, {
             type: "image",
             attrs: {
               src: url,
@@ -35,10 +34,11 @@ export const CustomFileHandler = FileHandler.configure({
           })
           .focus()
           .run();
-      } catch (e) {
-        // TODO add toast
-        console.error({ e });
-        currentEditor.chain().deleteRange(insertionRange).focus().run();
+      } catch {
+        toast.error("Failed to add an image. Please try again.");
+        currentEditor.chain().undo().run();
+        currentEditor.view.updateState(historySnapshot);
+
       }
     });
   },
@@ -49,7 +49,6 @@ export const CustomFileHandler = FileHandler.configure({
       }
       const pos = currentEditor.state.selection.anchor;
       const historySnapshot = currentEditor.state;
-      const insertionRange = { from: pos - 1, to: pos };
       currentEditor
         .chain()
         .insertContentAt(pos, `<tiptap-image-skeleton/>`)
@@ -60,7 +59,7 @@ export const CustomFileHandler = FileHandler.configure({
         currentEditor.view.updateState(historySnapshot);
         currentEditor
           .chain()
-          .insertContentAt(insertionRange, {
+          .insertContentAt(pos, {
             type: "image",
             attrs: {
               src: url,
@@ -69,9 +68,10 @@ export const CustomFileHandler = FileHandler.configure({
           })
           .focus()
           .run();
-      } catch (e) {
-        console.error(e);
-        currentEditor.chain().deleteRange(insertionRange).focus().run();
+      } catch {
+        toast.error("Failed to add an image. Please try again.");
+        currentEditor.chain().undo().run();
+        currentEditor.view.updateState(historySnapshot);
       }
     });
   },
