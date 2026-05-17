@@ -201,7 +201,9 @@ export default function PostForm({ data: postData }: PostFormProps) {
                 htmlFor="isPublished"
                 className="flex flex-col items-start w-full"
               >
-                <p className="text-sm font-semibold">Publish Immediately</p>
+                <p className="text-sm font-semibold">
+                  {isEdit ? "Published state" : "Publish Immediately"}
+                </p>
                 <div className="flex items-center w-full justify-between p-4 border rounded-lg bg-muted/20">
                   <p className="text-sm text-foreground font-normal">
                     Make this post visible to everyone.
