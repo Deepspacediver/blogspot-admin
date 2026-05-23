@@ -4,7 +4,6 @@ import {
   Bold,
   ChevronDown,
   Code,
-  Heading1,
   Heading2,
   Heading3,
   Heading4,
@@ -46,9 +45,7 @@ function MenuBar({ editor }: { editor: Editor }) {
         canItalic: ctx.editor.can().chain().toggleItalic().run() ?? false,
         isStrike: ctx.editor.isActive("strike") ?? false,
         canStrike: ctx.editor.can().chain().toggleStrike().run() ?? false,
-        // canClearMarks: ctx.editor.can().chain().unsetAllMarks().run() ?? false,
         isParagraph: ctx.editor.isActive("paragraph") ?? false,
-        isHeading1: ctx.editor.isActive("heading", { level: 1 }) ?? false,
         isHeading2: ctx.editor.isActive("heading", { level: 2 }) ?? false,
         isHeading3: ctx.editor.isActive("heading", { level: 3 }) ?? false,
         isHeading4: ctx.editor.isActive("heading", { level: 4 }) ?? false,
@@ -68,10 +65,6 @@ function MenuBar({ editor }: { editor: Editor }) {
   });
 
   const headingOptions = {
-    "heading-1": {
-      onSelect: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      icon: Heading1,
-    },
     "heading-2": {
       onSelect: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
       icon: Heading2,
