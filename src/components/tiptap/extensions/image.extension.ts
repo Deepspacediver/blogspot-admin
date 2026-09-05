@@ -10,16 +10,23 @@ export const ImageTiptapExtension = Image.extend({
       },
       textAlign: {
         default: "left",
-        parseHTML: (element) => element.style.justifyContent || "left",
-        renderHTML: (attributes) => ({
-          style: `justify-content: ${
-            attributes.textAlign === "left"
-              ? "flex-start"
-              : attributes.textAlign === "right"
-                ? "flex-end"
-                : "center"
-          }`,
-        }),
+        parseHTML: (element) =>
+          element.getAttribute("data-text-align") ||
+          element.style.textAlign ||
+          "left",
+        renderHTML: (attributes) => {
+          const alignment = attributes.textAlign || "left";
+          const marginMap: Record<string, string> = {
+            left: "margin-right: auto; margin-left: 0;",
+            center: "margin-left: auto; margin-right: auto;",
+            right: "margin-left: auto; margin-right: 0;",
+          };
+
+          return {
+            "data-text-align": alignment,
+            style: `display: block; ${marginMap[alignment] || ""}`,
+          };
+        },
       },
     };
   },
