@@ -62,6 +62,7 @@ axiosInstance.interceptors.response.use(
           }).catch(e => {
             isRefreshing = false;
             processQueue(e);
+            window.location.href = "/sign-in";
             reject(e);
           }).then(() => {
             isRefreshing = false;
