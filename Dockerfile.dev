@@ -1,0 +1,23 @@
+ARG NODE_VERSION=24.14.0-alpine
+
+FROM node:${NODE_VERSION} AS dev
+
+WORKDIR /app
+
+RUN chown node:node /app
+
+USER node
+
+COPY --chown=node:node ./package.json ./package-lock.json ./
+
+RUN npm ci
+
+USER node 
+
+COPY --chown=node:node . . 
+
+EXPOSE 5173 
+
+CMD ["npm", "run", "dev" ]
+
+
